@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+#visual Studio fails
+.vs
+.out
+nlohmann_json
+CMakePresets.json

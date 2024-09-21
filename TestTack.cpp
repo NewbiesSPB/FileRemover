@@ -1,17 +1,32 @@
 ﻿#include "TestTack.h"
 
-int main()
-{
+nlohmann::json OpenJson(std::string path) {
 
-	std::ifstream jsonFile("D:\\TestTack\\setting.json");
+	nlohmann::json dict;
+
+	std::ifstream jsonFile(path);
 	if (!jsonFile.is_open()) {
 		std::cout << "File is not found";
+		return dict;
+	}
+	jsonFile >> dict;
+	jsonFile.close();
+	return dict;
+}
+
+
+int main()
+{
+	
+	nlohmann::json dict = OpenJson("D:\\TestTack\\setting.json");
+	if (dict.empty())
+	{
+		std::cerr << "";
 		return 0;
 	}
-	nlohmann::json dict;
-	jsonFile >> dict;
+
+
 	std::string pathToDelete = dict["pathToDelete"];
-	std::cout << pathToDelete << std::endl;
 	
 	int day = dict["lifetimeInDays"];
 

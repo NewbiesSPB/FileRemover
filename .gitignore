@@ -33,6 +33,6 @@
 
 #visual Studio fails
 .vs
-.out
+out
 nlohmann_json
 CMakePresets.json

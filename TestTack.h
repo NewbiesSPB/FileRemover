@@ -7,6 +7,7 @@
 #include <chrono>
 #include "nlohmann/json.hpp"
 #include <map>
+#include <thread>
 
 
 class Remover
@@ -18,8 +19,7 @@ public:
 
 	bool CheckPathToDelete(std::string pathToDel);
 
-
-	bool CheckLifeTime(std::string pathToDel, int daysToDel);
+	bool Scanning(std::string pathToDel, int day);
 
 	void FailDelete();
 

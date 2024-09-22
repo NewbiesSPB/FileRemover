@@ -3,11 +3,11 @@
     "pathToDelete1": "D:\\new year\\test.txt",
     "lifetimeInDays1": 1,
 
-    "pathToDelete2": "path_2",
-    "lifetimeInDays2": 2,
+    "pathToDelete2": "D:\\new year\\test2.rtf",
+    "lifetimeInDays2": 1,
 
-    "pathToDelete3": "path_3",
-    "lifetimeInDays3": 3
+    "pathToDelete3": "D:\\new year\\test3.jpg",
+    "lifetimeInDays3": 1
   },
   "remove_interval": "interval",
   "scan_interval": "interval"

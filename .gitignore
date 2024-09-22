@@ -35,4 +35,4 @@
 .vs
 out
 nlohmann_json
-CMakePresets.json
+CMakeSettings.json

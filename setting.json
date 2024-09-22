@@ -1,5 +1,18 @@
 {
-  "lifetimeInDays": 6,
-  "pathToDelete": "D:\\new project\\NewProject\\NewProject.h"
-
+  "paths": [
+    {
+      "pathToDelete1": "path_1",
+      "interval": "interval_1"
+    },
+    {
+      "pathToDelete2": "path_2",
+      "interval": "interval_2"
+    },
+    {
+      "pathToDelete3": "path_3",
+      "interval": "interval_3"
+    }
+  ],
+  "remove_interval": "interval",
+  "scan_interval": "interval"
 }

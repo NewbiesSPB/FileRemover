@@ -14,18 +14,22 @@ class Remover
 {
 public:
 	Remover();
-	Remover(std::string& path);
-	bool OpenJson(std::string path);
+//	Remover(std::string& path);
+	bool Scanning(std::string path);
 
 	bool CheckPathToDelete(std::string pathToDel);
 
-	bool Scanning(std::string pathToDel, int day);
+	bool CheckLifeTime(std::string pathToDel, int day);
 
 	void FailDelete();
+
+	void Sleep();
 
 private:
 	nlohmann::json dict;
 	std::map <std::string, int>filesToDelete;
+	std::string path;
+	int scan_interval;
 };
 
 

@@ -1,11 +1,12 @@
 ﻿#include "TestTack.h"
 
 
-Remover::Remover() {};
-	Remover::Remover(std::string& path) : Remover() {
-		OpenJson(path);
-	}
-	bool Remover::OpenJson(std::string path) {
+Remover::Remover() : scan_interval(10), path(" ") {};
+	//Remover::Remover(std::string& _path) : Remover() {
+	//	path = _path;
+	//	Scanning(path);
+	//}
+	bool Remover::Scanning(std::string path) { // Считывает json файл
 
 		std::ifstream jsonFile(path);
 
@@ -15,16 +16,38 @@ Remover::Remover() {};
 			return false;
 		}
 
+
+		try
+		{
 		jsonFile >> dict; 
-		jsonFile.close(); 
 		filesToDelete.insert(std::make_pair(dict["paths"]["pathToDelete1"], dict["paths"]["lifetimeInDays1"]));
 		filesToDelete.insert(std::make_pair(dict["paths"]["pathToDelete2"], dict["paths"]["lifetimeInDays2"]));
 		filesToDelete.insert(std::make_pair(dict["paths"]["pathToDelete3"], dict["paths"]["lifetimeInDays3"]));
 
+		}
+		catch (const std::exception&)
+		{
+			std::cerr << "the jsonFile was recorded incorrectly " << std::endl; 
+			jsonFile.close();
+			return false;
+		}
+
+		try
+		{
+		scan_interval = dict["scan_interval"];
+		}
+		catch (const std::exception& )
+		{
+			std::cerr << "The interval for scanning must be a number " << std::endl;
+			jsonFile.close();
+			return false;
+		}
+
+		jsonFile.close();
 		return true;
 	}
 
-	bool Remover::CheckPathToDelete(std::string pathToDel)
+	bool Remover::CheckPathToDelete(std::string pathToDel) //Проверка существования файла
 	{
 		if (!std::filesystem::exists(pathToDel))
 		{
@@ -37,7 +60,7 @@ Remover::Remover() {};
 	}
 
 
-	bool Remover::Scanning(std::string pathToDel, int day)
+	bool Remover::CheckLifeTime(std::string pathToDel, int day) //Проверка время жизни файла
 	{
 		if (!CheckPathToDelete(pathToDel))
 			return false;
@@ -61,9 +84,9 @@ Remover::Remover() {};
 
 	}
 
-	void Remover::FailDelete()
+	void Remover::FailDelete() //Удаление файла(ов)
 	{
-		for (auto& it : filesToDelete)
+		for (auto& it : filesToDelete) 
 		{
 		/*
 			for (char ch : it.first) Проверка символов
@@ -72,10 +95,10 @@ Remover::Remover() {};
 			}
 		*/
 
-			if (Scanning(it.first, it.second))
+			if (CheckLifeTime(it.first, it.second))
 			{
-			std::cout << std::endl << std::filesystem::path(it.first).extension() << std::endl;
 				std::filesystem::remove(it.first);
+				std::cout << "The file on the path " << it.first << " has been succexfully deleted" << std::endl;
 			}
 			else
 			{
@@ -84,14 +107,21 @@ Remover::Remover() {};
 
 		}
 	}
+
+	void Remover::Sleep()
+	{
+		std::this_thread::sleep_for(std::chrono::seconds(scan_interval));
+	}
 int main()
 {
 	std::string path = "D:\\Test\\FileRemover\\setting.json";
-	Remover remover(path);
+	Remover remover;
 	while (1)
 	{
-	remover.FailDelete();
-	std::this_thread::sleep_for(std::chrono::seconds(10));
+		if (remover.Scanning(path)) {
+		remover.FailDelete();
+		}
+		remover.Sleep();
 
 	}
 
@@ -100,6 +130,7 @@ int main()
 	/*
 	* Возможное решение для маски
 	* 
+			std::cout << std::endl << std::filesystem::path(it.first).extension() << std::endl;
 	std::filesystem::path path("C:/Images");
 	std::filesystem::directory_iterator end_itr;
 	for (std::filesystem::directory_iterator itr(path); itr != end_itr; ++itr) {

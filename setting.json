@@ -10,5 +10,5 @@
     "lifetimeInDays3": 1
   },
   "remove_interval": "interval",
-  "scan_interval": "interval"
+  "scan_interval": "ds"
 }

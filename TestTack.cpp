@@ -1,14 +1,11 @@
 ﻿#include "TestTack.h"
 
 
-class Remover
-{
-public:
-	Remover() : firstPathToDelete(""), secondPathToDelete(""), thirdPathToDelete(""), day(0) {};
-	Remover(std::string& path) : Remover() {
+Remover::Remover() {};
+	Remover::Remover(std::string& path) : Remover() {
 		OpenJson(path);
 	}
-	bool OpenJson(std::string path) {
+	bool Remover::OpenJson(std::string path) {
 
 		std::ifstream jsonFile(path);
 
@@ -20,36 +17,37 @@ public:
 
 		jsonFile >> dict;
 		jsonFile.close();
+		filesToDelete.insert(std::make_pair(dict["paths"]["pathToDelete1"], dict["paths"]["lifetimeInDays1"]));
+		filesToDelete.insert(std::make_pair(dict["paths"]["pathToDelete2"], dict["paths"]["lifetimeInDays2"]));
+		filesToDelete.insert(std::make_pair(dict["paths"]["pathToDelete3"], dict["paths"]["lifetimeInDays3"]));
 		return true;
 	}
 
-	bool CheckPathToDelete()
+	bool Remover::CheckPathToDelete(std::string pathToDel)
 	{
-		if (!std::filesystem::exists(dict["paths"]["pathToDelete1"]))
+		if (!std::filesystem::exists(pathToDel))
 		{
-			std::cerr << "File for Delete is not found";
+			std::cerr << "The file on path "<< pathToDel <<" was not found" << std::endl;
 			return false;
 		}
-		firstPathToDelete = dict["paths"]["pathToDelete1"];
 		return true;
 		
 
 	}
 
 
-	bool CheckLifeTime()
+	bool Remover::CheckLifeTime(std::string pathToDel, int day)
 	{
-		if (!CheckPathToDelete())
+		if (!CheckPathToDelete(pathToDel))
 			return false;
 
-		day = dict["lifetimeInDays"];
 		if (day <= 0)
 		{
-			std::cerr << "The number of days cannot be negative";
+			std::cerr << "The interval for the path"<<pathToDel << "cannot be negative or equal to 0";
 			return false;
 		}
 
-		auto lastWrite = std::filesystem::last_write_time(firstPathToDelete);
+		auto lastWrite = std::filesystem::last_write_time(pathToDel);
 		auto lifetime = lastWrite + std::chrono::days(day);
 		auto now = std::chrono::file_clock::now();
 		auto difference = std::chrono::duration_cast<std::chrono::days>(lifetime - now);
@@ -58,32 +56,29 @@ public:
 			return false;
 		}
 		
-		std::cout << firstPathToDelete << std::endl << difference;
 		return true;
 
 	}
 
-	void FailDelete()
+	void Remover::FailDelete()
 	{
-		if (CheckLifeTime())
+		for (auto& it: filesToDelete)
 		{
-			std::cout << firstPathToDelete;
-			std::filesystem::remove(firstPathToDelete);
+			if (CheckLifeTime(it.first, it.second))
+			{
+			std::cout << std::filesystem::path(it.first).extension();
+				std::cout << it.first;
+				//std::filesystem::remove(firstPathToDelete);
+			}
+
 		}
 	}
-
-private:
-	nlohmann::json dict;
-	std::string firstPathToDelete;
-	std::string secondPathToDelete;
-	std::string thirdPathToDelete;
-	int day;
-};
 
 int main()
 {
 	std::string path = "D:\\Test\\FileRemover\\setting.json";
 	Remover remover(path);
+
 	remover.FailDelete();
 
 	return 0;

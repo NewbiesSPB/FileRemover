@@ -6,30 +6,27 @@
 #include <fstream>
 #include <chrono>
 #include "nlohmann/json.hpp"
+#include <map>
 
-/*
+
 class Remover
 {
 public:
-	Remover() : pathToDelete(""), day(0) {};
-	Remover(std::string& path) : Remover() {
-		OpenJson(path);
-	}
+	Remover();
+	Remover(std::string& path);
 	bool OpenJson(std::string path);
 
-	bool CheckPathToDelete();
+	bool CheckPathToDelete(std::string pathToDel);
 
 
-	bool CheckLifeTime();
+	bool CheckLifeTime(std::string pathToDel, int daysToDel);
 
-	bool FailDelete();
+	void FailDelete();
 
 private:
 	nlohmann::json dict;
-	std::string pathToDelete;
-	int day;
+	std::map <std::string, int>filesToDelete;
 };
 
-*/
 
 #endif 
